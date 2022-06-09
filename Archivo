@@ -1,0 +1,6 @@
+IniciarPrograma Prueba {
+Alexa();
+int: x = 10;
+x=x+1;
+Alexa (limpiar, x);
+}

@@ -1,0 +1,5 @@
+IniciarPrograma(vacío)
+entero: x = 5, y=6;
+si(x==5){
+x=y+1;}
+TerminarPrograma;

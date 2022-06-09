@@ -1,0 +1,6 @@
+IniciarPrograma(vacío)
+decimal: x1 = 1.5, yes=25.25;
+repetir(x1<yes){
+x1=x1+1.5;}
+yes=yes+x1;
+TerminarPrograma;
