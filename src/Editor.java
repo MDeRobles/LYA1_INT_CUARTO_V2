@@ -1,6 +1,9 @@
 
+import com.sun.speech.freetts.Voice;
+import com.sun.speech.freetts.VoiceManager;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.PopupMenu;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +16,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.APPROVE_OPTION;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JTextPane;
@@ -28,10 +32,9 @@ import javax.swing.text.StyleContext;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
- * @author Eduardo
+ * 
  */
 public class Editor extends javax.swing.JFrame {
 
@@ -56,13 +59,13 @@ public class Editor extends javax.swing.JFrame {
         ImageIcon imagenCL = new ImageIcon(getClass().getResource("IMG/compilar-Léxico.png"));
         ImageIcon imagenCS = new ImageIcon(getClass().getResource("IMG/Compilar-Sintáctico.png"));
 
-        Icon imgN=new ImageIcon(imagenN.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
-        Icon imgA=new ImageIcon(imagenA.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
-        Icon imgC=new ImageIcon(imagenC.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
-        Icon imgG=new ImageIcon(imagenG.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
-        Icon imgGC=new ImageIcon(imagenGC.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
-        Icon imgCL=new ImageIcon(imagenCL.getImage().getScaledInstance(25, 29, Image.SCALE_SMOOTH));
-        Icon imgCS=new ImageIcon(imagenCS.getImage().getScaledInstance(25, 29, Image.SCALE_SMOOTH));
+        Icon imgN = new ImageIcon(imagenN.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        Icon imgA = new ImageIcon(imagenA.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        Icon imgC = new ImageIcon(imagenC.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        Icon imgG = new ImageIcon(imagenG.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        Icon imgGC = new ImageIcon(imagenGC.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        Icon imgCL = new ImageIcon(imagenCL.getImage().getScaledInstance(25, 29, Image.SCALE_SMOOTH));
+        Icon imgCS = new ImageIcon(imagenCS.getImage().getScaledInstance(25, 29, Image.SCALE_SMOOTH));
 
         mnuNuevo.setIcon(imgN);
         btnNuevo.setIcon(imgN);
@@ -124,7 +127,7 @@ public class Editor extends javax.swing.JFrame {
 
         txtErrores.setEditable(false);
         txtErrores.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtErrores.setText("ERRORES");
+        txtErrores.setText("  ERRORES");
         txtErrores.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtErrores.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -134,7 +137,7 @@ public class Editor extends javax.swing.JFrame {
         pnlPrinc.add(txtErrores, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 340, 460, 30));
 
         txtPEditor.setFont(new java.awt.Font("Consolas", 0, 20)); // NOI18N
-        txtPEditor.setText("#Programa número 1 - Prueba#\nIniciarPrograma: Prueba {\nAlexa();\nint: x = 10;\nx=x+1;\nAlexa (limpiar, x);\n}");
+        txtPEditor.setText("#Programa número 1 - Prueba\nIniciarPrograma: Prueba {\nAlexa();\nint: x = 10;\nluz: l1 = true;\nx: x+1;\nAlexa (encender, l1);\n}");
         spnlEditor.setViewportView(txtPEditor);
 
         pnlPrinc.add(spnlEditor, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 460, 300));
@@ -142,6 +145,11 @@ public class Editor extends javax.swing.JFrame {
         txtPErrores.setEditable(false);
         txtPErrores.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         txtPErrores.setForeground(new java.awt.Color(255, 0, 0));
+        txtPErrores.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtPErroresMouseClicked(evt);
+            }
+        });
         spnlErrores.setViewportView(txtPErrores);
 
         pnlPrinc.add(spnlErrores, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 370, 460, 220));
@@ -238,7 +246,7 @@ public class Editor extends javax.swing.JFrame {
         txtPToken.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         spnlToken.setViewportView(txtPToken);
 
-        pnlPrinc.add(spnlToken, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 80, 360, 513));
+        pnlPrinc.add(spnlToken, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 80, 360, 510));
 
         getContentPane().add(pnlPrinc, java.awt.BorderLayout.CENTER);
 
@@ -354,19 +362,19 @@ public class Editor extends javax.swing.JFrame {
         }
         try {
             /*Flujos de Bytes
-            java.io.FileOutputStream fbs=new java.io.FileOutputStream("Archivo.txt");
-            byte b[]=txtPEditor.getText().getBytes();
-            fbs.write(b);
-            fbs.flush();
-            fbs.close();
-            */
+             java.io.FileOutputStream fbs=new java.io.FileOutputStream("Archivo.txt");
+             byte b[]=txtPEditor.getText().getBytes();
+             fbs.write(b);
+             fbs.flush();
+             fbs.close();
+             */
             //Flujos de Caracteres
-            java.io.FileWriter fcs=new java.io.FileWriter(archivo);
+            java.io.FileWriter fcs = new java.io.FileWriter(archivo);
             fcs.write(txtPEditor.getText());
             fcs.flush();
             fcs.close();
             JOptionPane.showMessageDialog(null, "Archivo guardado.");
-        }catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             Logger.getLogger(Editor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Editor.class.getName()).log(Level.SEVERE, null, ex);
@@ -377,14 +385,14 @@ public class Editor extends javax.swing.JFrame {
         if (txtPEditor.getText().equals("")) {
             return;
         }
-        int op=javax.swing.JOptionPane.showConfirmDialog(this, "Desea guardar?");
-        if(op==-1||op==2){
+        int op = javax.swing.JOptionPane.showConfirmDialog(this, "Desea guardar?");
+        if (op == -1 || op == 2) {
             return;
-        }else if(op==0){
+        } else if (op == 0) {
             mnuGuardarActionPerformed(evt);
         }
         txtPEditor.setText("");
-        archivo="";
+        archivo = "";
     }//GEN-LAST:event_mnuNuevoActionPerformed
 
     private void mnuGuardarCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuGuardarCActionPerformed
@@ -397,7 +405,7 @@ public class Editor extends javax.swing.JFrame {
         f.setCurrentDirectory(directorio);
 
         if (f.showSaveDialog(this) == APPROVE_OPTION && f.getFileFilter() == filtro) {
-            archivo= f.getSelectedFile().getName() + ".txt";
+            archivo = f.getSelectedFile().getName() + ".txt";
             mnuGuardarActionPerformed(evt);
         } else {
             showMessageDialog(this, "Solo archivos de texto");
@@ -407,17 +415,19 @@ public class Editor extends javax.swing.JFrame {
     private void mnuLexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuLexActionPerformed
         txtPToken.setText("");
         txtPErrores.setText("");
-        
-        if (txtPEditor.getText().replaceAll(" ","").equalsIgnoreCase("")) {
-            showMessageDialog(this,"Campo Vacío.");
+        txtPErrores.removeAll();
+        y = 0;
+
+        if (txtPEditor.getText().replaceAll(" ", "").equalsIgnoreCase("")) {
+            showMessageDialog(this, "Campo Vacío.");
             return;
         }
-        
+
         Analizar();
         for (int i = 0; i < t; i++) {
-            if(T[i].getTipo().equals("Error")){
-                if(!T[i].getTk().equals("")){
-                    escError(T[i].getLinea(),T[i].getCaracter(),"Error en la definición del número o identificador.");
+            if (T[i].getTipo().equals("Error")) {
+                if (!T[i].getTk().equals("")) {
+                    escError(T[i].getLinea(), T[i].getCaracter(), "Error en la definición del número o identificador.", T, i);
                 }
             }
         }
@@ -434,112 +444,140 @@ public class Editor extends javax.swing.JFrame {
     }//GEN-LAST:event_mnuCerrarActionPerformed
 
     private void mnuSinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuSinActionPerformed
-        mnuLexActionPerformed(evt);    
+        mnuLexActionPerformed(evt);
 
-        String contenido= txtPEditor.getText().replace(" ", "");
+        String contenido = txtPEditor.getText().replace(" ", "");
         String pal = "", c = "";
         String L[] = contenido.split("\n");
         String cad;
 
         /*for (int j = 0; j < L.length; j++) {
-            cad = L[j];         
-            for (int i = 0; i < cad.length(); i++) {
-                if(cad.matches("\\W*Alexa\\W*") && !cad.matches("\\W*Alexa(ola);\\W*")){
-                escError(j+1,i,"Error.");
-                }
-            }
-        }*/
-
+         cad = L[j];         
+         for (int i = 0; i < cad.length(); i++) {
+         if(cad.matches("\\W*Alexa\\W*") && !cad.matches("\\W*Alexa(ola);\\W*")){
+         escError(j+1,i,"Error.");
+         }
+         }
+         }*/
+        I = new Identificador[10000];
+        j = 0;
 
         for (int i = 0; i < t; i++) {
-            try{
-                if(T[i].getTk().equals("Alexa")){
-                    Gram.alexa(T, i+1);
-                        
-                }else if(T[i].getTk().equals("int")){
-                    if(Gram.decla(T,i+1,"Entero") < 0){
-                        escError(T[i].getLinea(),T[i].getCaracter(),"Declaración incorrecta o faltapunto y coma.");
+            try {
+                if (T[i].getTk().equals("Alexa")) {
+                    Gram.alexa(T, i + 1);
+                }/*else if(T[i].getTk().equalsIgnoreCase("Alexaencender") || T[i].getTk().equalsIgnoreCase("Alexalimpiar")){
+                 escError(T[i].getLinea(),T[i].getCaracter(),"Falta paréntesis que abre.",T,i);
+                 }*/ else if (T[i].getTk().equals("int")) {
+                    if (Gram.decla(T, i + 1, "Entero") < 0) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Declaración incorrecta.", T, i + 1);
+                        j++;
                     }
-                }else if(T[i].getTk().equals("boolean")){
-                    if(Gram.decla(T,i+1,"Booleano") < 0){
-                        escError(T[i].getLinea(),T[i].getCaracter(),"Declaración incorrecta o faltapunto y coma.");
+                } else if (T[i].getTk().equals("boolean")) {
+                    if (Gram.decla(T, i + 1, "Booleano") < 0) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Declaración incorrecta.", T, i + 1);
+                        j++;
                     }
-                }else if(T[i].getTk().equals("luz")){
-                    if(Gram.decla(T,i+1,"Luz") < 0){
-                        escError(T[i].getLinea(),T[i].getCaracter(),"Declaración incorrecta o faltapunto y coma.");
+                } else if (T[i].getTk().equals("luz")) {
+                    if (Gram.decla(T, i + 1, "Luz") < 0) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Declaración incorrecta.", T, i + 1);
+                        j++;
                     }
-                }else if(T[i].getTk().equals("bocina")){
-                    if(Gram.decla(T,i+1,"Bocina") < 0){
-                        escError(T[i].getLinea(),T[i].getCaracter(),"Declaración incorrecta o faltapunto y coma.");
+                } else if (T[i].getTk().equals("bocina")) {
+                    if (Gram.decla(T, i + 1, "Bocina") < 0) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Declaración incorrecta.", T, i + 1);
+                        j++;
                     }
-                }else if(T[i].getTk().equals("camara")){
-                    if(Gram.decla(T,i+1,"Camara") < 0){
-                        escError(T[i].getLinea(),T[i].getCaracter(),"Declaración incorrecta o faltapunto y coma.");
+                } else if (T[i].getTk().equals("camara")) {
+                    if (Gram.decla(T, i + 1, "Camara") < 0) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Declaración incorrecta.", T, i + 1);
+                        j++;
                     }
-                }else if(T[i].getTk().equals("while")){
-                    if(Gram.EsIF(T,i+1) == false){
-                        escError(T[i].getLinea(),T[i].getCaracter(),"Sintaxis incorrecta.");
+                } else if (T[i].getTk().equals("puerta")) {
+                    if (Gram.decla(T, i + 1, "Puerta") < 0) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Declaración incorrecta.", T, i + 1);
+                        j++;
                     }
-                }else if(T[i].getTipo().equals("Error")){
-                
-                    if(T[i].getTk().equals("") && !T[i-1].getTk().equals(";")){
+                } else if (T[i].getTk().equals("aspersor")) {
+                    if (Gram.decla(T, i + 1, "Aspersor") < 0) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Declaración incorrecta.", T, i + 1);
+                        j++;
+                    }
+                } else if (T[i].getTk().equals("juguete")) {
+                    if (Gram.decla(T, i + 1, "Juguete") < 0) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Declaración incorrecta.", T, i + 1);
+                        j++;
+                    }
+                } else if (T[i].getTk().equals("premio")) {
+                    if (Gram.decla(T, i + 1, "Premio") < 0) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Declaración incorrecta.", T, i + 1);
+                        j++;
+                    }
+
+                } else if (T[i].getTk().equals("if")) {
+                    if (Gram.EsIF(T, i + 1) == false) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Sintaxis incorrecta.", T, i);
+                    }
+                } else if (T[i].getTk().equals("while")) {
+                    if (Gram.EsIF(T, i + 1) == false) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Sintaxis incorrecta.", T, i, "While");
+                    }
+                } else if (T[i].getTk().equals("for")) {
+                    if (Gram.EsIF(T, i + 1) == false) {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Sintaxis incorrecta.", T, i, "For");
+                    }
+                } else if (T[i].getTipo().equals("Identificador") && T[i + 1].getTk().equals(":") && Gram.expE(T, i + 2) < 0) {
+                    int k = i;
+                    if (Gram.expE(T, i + 2) >= 0) {
+                        i = Gram.expE(T, i + 2);
+                        System.out.println(T[i]);
+                        if (!T[i].getTk().equals(";")) {
+                            escError(T[i - 1].getLinea(), T[i].getCaracter(), "Falta punto y coma.", T, k, "Asignación");
+                        }
+                    } else {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Asignación incorrecta.", T, i);
+                    }
+                } else if (T[i].getTk().equals("IniciarPrograma")) {
+                    if (T[i + 1].getTk().equals(":")) {
+                        if (T[i + 2].getTipo().equals("Identificador")) {
+                            if (!T[i + 3].getTk().equals("{")) {
+                                escError(T[i].getLinea(), T[i].getCaracter(), "Falta llave que abre.", T, i);
+                            }
+                        } else {
+                            escError(T[i].getLinea(), T[i].getCaracter(), "Falta nombre del programa.", T, i);
+                        }
+                    } else {
+                        escError(T[i].getLinea(), T[i].getCaracter(), "Faltan dos puntos.", T, i);
+                    }
+                } else if (T[i].getTipo().equals("Error")) {
+                    if (T[i].getTk().equals("") && !T[i - 1].getTk().equals(";")) {
                         //escError(T[i].getLinea(),T[i].getCaracter(),"Faltan parámetros.");
-                    }else{
+                    } else {
 
                     }
-                }/*else if(T[i].getTipo().equals("Identificador") && T[i+1].getTk().equals("=") && Gram.expE(T,i+2) < 0){
-                    i = Gram.expE(T,i+2);
-                    escError(T[i].getLinea(),T[i].getCaracter(),"Asignación incorrecta o faltapunto y coma.");
-                }*/
-            
-/*if(T[i].getTk().equals("int") && !(T[i+1].getTk().equals(":") && T[i+2].getTipo().equals("Identificador") && T[i+3].getTk().equals(";"))){
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
 
-}*/
-
-                /*if(T[i].getTk().equals("int") && T[i+3].getTk().equals("=") && !T[i+4].getTipo().equalsIgnoreCase("entero")){
-                    escError(prl[prn],(i+4),"El valor no corresponde con el tipo de dato.");                
-
-                    if(T[i+5].getTk().equals(",") && !T[i+8].getTipo().equalsIgnoreCase("entero")){
-                        escError(prl[prn],(i+8),"El valor no corresponde con el tipo de dato.");
-                    }
-                    prn++;
-                }else if(T[i].getTk().equalsIgnoreCase("float") && T[i+3].getTk().equals("=") && !T[i+4].getTipo().equalsIgnoreCase("decimal")){
-                    escError(prl[prn],(i+4),"El valor no corresponde con el tipo de dato.");
-
-                    if(T[i+5].getTk().equals(",") && !T[i+8].getTipo().equalsIgnoreCase("decimal")){
-                        escError(prl[prn],(i+8),"El valor no corresponde con el tipo de dato.");
-                    }
-                    prn++;
-                }else if(T[i].getTk().equalsIgnoreCase("float") && T[i+3].getTipo().equals("=") && !T[i+4].getTipo().equalsIgnoreCase("float")){
-                    escError(prl[prn],(i+4),"El valor no corresponde con el tipo de dato.");
-                    if(T[i+5].getTk().equals(",") && !T[i+8].getTipo().equalsIgnoreCase("float")){
-                        escError(t,(i+8),"El valor no corresponde con el tipo de dato.");
-                    }
-                }*/
-            }catch(ArrayIndexOutOfBoundsException e){
-
-                } 
-        }
-
-    int t2=0;
-    try{
-        while(!I[t2].getId().equals("null")){
-            if(I[t2].getTipo().equals("Entero") && !I[t2].getVal().equals("") && !Grafos.esInt(I[t2].getVal())){
-                escError(I[t2].getT().getLinea(),I[t2].getT().getCaracter(),"Valor incompatible.");
             }
-            //System.out.println(I[t2]);
-            t2++;
         }
-    }catch(NullPointerException e){
-    return;
-    }
 
-        /*if (!T[t-1].getTk().equals(";")) {
-            txtPErrores.append("Linea:"+L.length);
-            txtPErrores.append(System.getProperty("line.separator"));
-            txtPErrores.append("Falta ;");
-            txtPErrores.append(System.getProperty("line.separator"));
-        }*/
+        llaves(T, 0, t);
+        llaves2(T, 0, t - 1);
+
+        int t2 = 0;
+        try {
+            while (!I[t2].getId().equals("null")) {
+                /*if(I[t2].getTipo().equals("Entero") && !I[t2].getVal().equals("") && !Grafos.esInt(I[t2].getVal())){
+                 escError(I[t2].getT().getLinea(),I[t2].getT().getCaracter(),"Valor incompatible.");
+                 }else if(I[t2].getTipo().equals("Luz") && !I[t2].getVal().equals("") && !(I[t2].getVal().equals("true") || I[t2].getVal().equals("false"))){
+                 escError(I[t2].getT().getLinea(),I[t2].getT().getCaracter(),"Valor incompatible.");
+                 }*/
+                //System.out.println(I[t2]);
+                t2++;
+            }
+        } catch (NullPointerException e) {
+
+        }
     }//GEN-LAST:event_mnuSinActionPerformed
 
     private void btnGuardarCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarCActionPerformed
@@ -574,138 +612,187 @@ public class Editor extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTokenActionPerformed
 
-    private void Analizar(){
-        String contenido= txtPEditor.getText().replace(" ", "");
+    private void txtPErroresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtPErroresMouseClicked
+        /*Sugerencia sug = new Sugerencia();
+         sug.setLocationRelativeTo(null);
+         sug.setVisible(true);*/
+    }//GEN-LAST:event_txtPErroresMouseClicked
+
+    private void Analizar() {
+        String contenido = txtPEditor.getText().replace(" ", "");
         String pal = "", c = "";
         String L[] = contenido.split("\n");
         String cad;
         t = 0;
 
-/*if(i == L.length-1){
-        pal = L[L.length-1].substring(T[t].getCaracter());
-}*/
-
+        /*if(i == L.length-1){
+         pal = L[L.length-1].substring(T[t].getCaracter());
+         }*/
         for (int j = 0; j < L.length; j++) {
-            cad = L[j];         
+            cad = L[j];
             for (int i = 0; i < cad.length(); i++) {
                 c = cad.substring(i, i + 1);
-                /*if(c.equals("#")){
-                    ++j;
-                }else */if (!c.equals(" ") && esOp(c) == -1 && esSim(c) == -1) {
-                    pal = pal + c;                    
-                }else if(!pal.equals(" ")){
+                if (c.equals("#")) {
+                    i = cad.length();
+                } else if (!c.equals(" ") && esOp(c) == -1 && esSim(c) == -1) {
+                    pal = pal + c;
+                } else if (!pal.equals(" ")) {
                     if (esPR(pal)) {
-                        T[t++] = new Token(pal, "Palabra reservada",j+1,i - pal.length());
-                    }else if (Grafos.esIde(pal)) {
-                        T[t++] = new Token(pal, "Identificador",j+1,i - pal.length());
-                    }else if (Grafos.esInt(pal)) {
-                        T[t++] = new Token(pal, "Entero",j+1,i - pal.length());
-                    }else if (Grafos.esDecimal(pal)) {
-                        T[t++] = new Token(pal, "Decimal",j+1,i - pal.length());
-                    }else {
-                        T[t++] = new Token(pal, "Error",j+1,i - pal.length());
-                    }  
-
-                    if ((esOp(c) == 1 || esOp(c) == 2) && c.equals(cad.substring(i+1, i+2))) {
-                        T[t++] = new Token(c+c, "Operador",j+1,i - pal.length());
-                        if(cad.substring(i+2, i+3).equals(";")){
-                            T[t++] = new Token (";", "Símbolo especial",j+1,i - pal.length());
-                        }                        
-                        i=i+2;
-                    }/*else if (esOp(c) != -1 && c.equals(cad.substring(i+1, i+2))) {
-                        T[t++] = new Token(c+c, "Operador",j+1,i - pal.length());
-                        i++;
-                    }else if(esOp(c) != -1 && (esSim(cad.substring(i+1, i+2)) != -1)){
-                        T[t++] = new Token(c, "Operador",j+1,i - pal.length());
-                        T[t++] = new Token(cad.substring(i+1), "símbolo especial",j+1,i + 1 - pal.length());
-                        i=i+2;
-                    }*/else if (esOp(c) != -1) {
-                        T[t++] = new Token(c, "Operador",j+1,i - pal.length());
-                    }else if(esSim(c) != -1 && esSim(cad.substring(i+1)) != -1){
-                        T[t++] = new Token(c, "Símbolo especial",j+1,i - pal.length());
-                        T[t++] = new Token(cad.substring(i+1), "Símbolo especial",j+1,i + 1 - pal.length());
-                        i++;                        
-                    }else if (esSim(c) != -1) {
-                        T[t++] = new Token(c, "Símbolo especial",j+1,i - pal.length());
+                        T[t++] = new Token(pal, "Palabra reservada", j + 1, i - pal.length() + 1);
+                    } else if (Grafos.esIde(pal)) {
+                        T[t++] = new Token(pal, "Identificador", j + 1, i - pal.length() + 1);
+                    } else if (Grafos.esInt(pal)) {
+                        T[t++] = new Token(pal, "Entero", j + 1, i - pal.length() + 1);
+                    } else if (Grafos.esDecimal(pal)) {
+                        T[t++] = new Token(pal, "Decimal", j + 1, i - pal.length() + 1);
+                    } else {
+                        T[t++] = new Token(pal, "Error", j + 1, i - pal.length() + 1);
                     }
 
-                    pal="";
+                    if ((esOp(c) == 1 || esOp(c) == 2) && c.equals(cad.substring(i + 1, i + 2)) || (esSim(c) == 6) && c.equals(cad.substring(i + 1, i + 2)) || (esSim(c) == 7) && c.equals(cad.substring(i + 1, i + 2))) {
+                        T[t++] = new Token(c + c, "Operador lógico", j + 1, i - pal.length() + 1);
+                        if (cad.substring(i + 2, i + 3).equals(";")) {
+                            T[t++] = new Token(";", "Símbolo especial", j + 1, i - pal.length() + 1);
+                        }
+                        i = i + 1;
+                    } else if ((esSim(c) == 8 && esOp(cad.substring(i + 1, i + 2)) == 0) || (esOp(c) == 0 && c.equals(cad.substring(i + 1, i + 2)))) {
+                        T[t++] = new Token(c + cad.substring(i + 1, i + 2), "Operador relacional", j + 1, i - pal.length() + 1);
+                        if (cad.substring(i + 2, i + 3).equals(";")) {
+                            T[t++] = new Token(";", "Símbolo especial", j + 1, i - pal.length() + 1);
+                        }
+                        i = i + 1;
+                    } else if ((esSim(c) == 9 && esOp(cad.substring(i + 1, i + 2)) == 0) || (esSim(c) == 10 && esOp(cad.substring(i + 1, i + 2)) == 0)) {
+                        T[t++] = new Token(c + cad.substring(i + 1, i + 2), "Operador relacional", j + 1, i - pal.length() + 1);
+                        if (cad.substring(i + 2, i + 3).equals(";")) {
+                            T[t++] = new Token(";", "Símbolo especial", j + 1, i - pal.length() + 1);
+                        }
+                        i = i + 1;
+                    }/*else if (esOp(c) != -1 && c.equals(cad.substring(i+1, i+2))) {
+                     T[t++] = new Token(c+c, "Operador",j+1,i - pal.length());
+                     i++;
+                     }else if(esOp(c) != -1 && (esSim(cad.substring(i+1, i+2)) != -1)){
+                     T[t++] = new Token(c, "Operador",j+1,i - pal.length());
+                     T[t++] = new Token(cad.substring(i+1), "símbolo especial",j+1,i + 1 - pal.length());
+                     i=i+2;
+                     }*/ else if (esOp(c) != -1) {
+                        T[t++] = new Token(c, "Operador", j + 1, i - pal.length() + 1);
+                    } else if (esSim(c) != -1 && esSim(cad.substring(i + 1)) != -1) {
+                        T[t++] = new Token(c, "Símbolo especial", j + 1, i - pal.length() + 1);
+                        T[t++] = new Token(cad.substring(i + 1), "Símbolo especial", j + 1, i + 2 - pal.length());
+                        i++;
+                    } else if (esSim(c) != -1) {
+                        T[t++] = new Token(c, "Símbolo especial", j + 1, i - pal.length() + 1);
+                    }
+
+                    pal = "";
                 }
             }
         }
 
-        String txt="";
+        String txt = "";
         for (int i = 0; i < t; i++) {
-            if(!T[i].getTipo().equals("Error")){
+            if (!T[i].getTipo().equals("Error")) {
                 txt = txt + "[" + T[i] + "]\n";
-if(T[i].getTk().equals("int") && T[i+1].getTk().equals(":") && T[i+3].getTipo().equals("Identificador")){
-
-}
             }
             txtPToken.setText(txt);
         }
 
     }
 
-    protected static void escError(int l, int c, String msg){
+    protected static void escError(int l, int c, String msg, Token[] t, int i) {
         String txt = txtPErrores.getText();
+        String tipo = gram(msg);
 
-        txt = txt + "Linea:"+l+" Caracter:"+c+"\n"+msg+"\n";
-        /*txtPErrores.append("Linea:"+l+" Caracter:"+c);
-        txtPErrores.append(System.getProperty("line.separator"));
-        txtPErrores.append(pista);
-        txtPErrores.append(System.getProperty("line.separator"));*/
+        if (msg.equals("Error en la definición del número o identificador.") || msg.equals("Valor incompatible.") || msg.equals("Identificador no encontrado.") || msg.equals("Identificador incompatible.")) {
+            txt = txt + "E.L. - Linea:" + l + " Caracter:" + c + "\n" + msg + "\n";
+        } else {
+            txt = txt + "E.S. - Linea:" + l + " Caracter:" + c + "\n" + msg + "\n";
+        }
         txtPErrores.setText(txt);
+
+        txtPErrores.add(new Vinculo(350, y, tipo, t, i));
+        y += 50;
     }
 
-    private boolean hayPyC(Token t){
-        if(t.getTk().equals(";")){
+    protected static void escError(int l, int c, String msg, Token[] t, int i, String tipo) {
+        String txt = txtPErrores.getText();
+
+        txt = txt + "E.S. - Linea:" + l + " Caracter:" + c + "\n" + msg + "\n";
+        txtPErrores.setText(txt);
+
+        txtPErrores.add(new Vinculo(350, y, tipo, t, i));
+        y += 50;
+    }
+
+    private static String gram(String msg) {
+        if (msg.equals("Error en la definición del número o identificador.")) {
+            return "Identificador";
+        } else if (msg.equals("Parámetros incorrectos.") || msg.equals("Falta paréntesis que abre.") || msg.equals("Falta paréntesis que cierra.")) {
+            return "Alexa";
+        } else if (msg.equals("Asignación incorrecta.")) {
+            return "Asignación";
+        } else if (msg.equals("Declaración incorrecta.") || msg.equals("Valor incompatible.")) {
+            return "Declaración";
+        }
+
+        return "";
+    }
+
+    private boolean hayPyC(Token t) {
+        if (t.getTk().equals(";")) {
             return true;
-        }else{
-            escError(t.getLinea(),t.getCaracter(),"Falta punto y coma.");            
+        } else {
+            escError(t.getLinea(), t.getCaracter(), "Falta punto y coma.", T, 0);
             return false;
         }
     }
 
-    private int esOp(String op ){
-        String OP[]={"=","+","-","*","/"};
-        for (int i = 0; i<OP.length; i++) {
-            if(op.equals(OP[i])){
+    private int esOp(String op) {
+        String OP[] = {"=", "+", "-", "*", "/"};
+        for (int i = 0; i < OP.length; i++) {
+            if (op.equals(OP[i])) {
                 return i;
             }
         }
         return -1;
-    }    
-    private boolean esOperando(Token t){
-        return esOp(t.getTk())==-1;
     }
-    private boolean mayPrioridad (Token a,Token b){
-        return esOp(a.getTk())<esOp(b.getTk());
+
+    private boolean esOperando(Token t) {
+        return esOp(t.getTk()) == -1;
     }
-    private int hayOp0(){
-          for (int i = 0; i < t; i++)  if(T[i].getTk().equals("="))return i;
-          return -1;
+
+    private boolean mayPrioridad(Token a, Token b) {
+        return esOp(a.getTk()) < esOp(b.getTk());
     }
-    
-    private boolean esPR(String p){
-        String palres[]= {"Alexa","IniciarPrograma","TerminarPrograma","null","limpiar","prende","prender","apagar","encender","enciende","apaga","llena","llenar","lanzar",
-        "lanza","dispensa","dispensar","sirve","servir","echar","echa","cierra","cerrar","abir","abre","estado","temperatura",
-        "aumentar","disminuir","camara","bocina","aspersor","aspersores","emite","reproducir","reproduce",
-        "int","float","boolean","for","while","if","else","public","private","void","static",
-        "break","catch","try","class","default","exports","extends","implements","import","interface","new","return","super",
-        "this","luz"};
-        for (int i = 0; i<palres.length; i++) {
-            if(p.equals(palres[i])){
+
+    private int hayOp0() {
+        for (int i = 0; i < t; i++) {
+            if (T[i].getTk().equals("=")) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private boolean esPR(String p) {
+        String palres[] = {"Alexa", "IniciarPrograma", "TerminarPrograma", "null", "limpiar", "prende", "prender", "apagar", "encender", "enciende", "apaga", "llena", "llenar", "lanzar",
+            "lanza", "dispensa", "dispensar", "sirve", "servir", "echar", "echa", "cierra", "cerrar", "abir", "abre", "estado", "temperatura",
+            "aumentar", "disminuir", "camara", "bocina", "aspersor", "aspersores", "emite", "reproducir", "reproduce",
+            "int", "float", "boolean", "for", "while", "if", "else", "public", "private", "void", "static",
+            "break", "catch", "try", "class", "default", "exports", "extends", "implements", "import", "interface", "new", "return", "super",
+            "this", "luz", "puerta", "juguete", "premio"};
+        for (int i = 0; i < palres.length; i++) {
+            if (p.equals(palres[i])) {
                 return true;
             }
         }
         return false;
     }
-    
-    private int esSim(String p){
-        String simEsp[]= {"(",")","{","}","[","]","|","&","!","<",">",",",";",":","#","\""};
-        for (int i = 0; i<simEsp.length; i++) {
-            if(p.equals(simEsp[i])){
+
+    private int esSim(String p) {
+        String simEsp[] = {"(", ")", "{", "}", "[", "]", "|", "&", "!", "<", ">", ",", ";", ":", "#", "\""};
+        for (int i = 0; i < simEsp.length; i++) {
+            if (p.equals(simEsp[i])) {
                 return i;
             }
         }
@@ -760,13 +847,13 @@ if(T[i].getTk().equals("int") && T[i+1].getTk().equals(":") && T[i+3].getTipo().
                 while (wordR <= after) {
                     if (wordR == after || String.valueOf(text.charAt(wordR)).matches("\\W")) {
                         if (text.substring(wordL, wordR).matches("(\\W)*(Alexa|IniciarPrograma|TerminarPrograma|null|limpiar|prende|prender|apagar|encender|enciende|apaga|llena|llenar|lanzar|lanza|dispensa|dispensar|sirve|servir|echar|echa|cierra|cerrar|abir|abre|estado|temperatura|aumentar|disminuir|emite|reproducir|reproduce|for|while|if|else|public|private|void|static|break|catch|try|class|default|new|return|this)")) {
-                            setCharacterAttributes(wordL , wordR - wordL , attblue, false);
-                        } else if (text.substring(wordL, wordR).matches("(\\W)*(int|float|boolean|string|camara|bocina|aspersor|luz|true|false)")) {
-                            setCharacterAttributes(wordL , wordR - wordL , attgreen, false);
-                        } else if (text.substring(wordL, wordR).matches("(\\W)*(#(\\W)*)#")) {
-                            setCharacterAttributes(wordL , wordR - wordL , attorange, false);
+                            setCharacterAttributes(wordL, wordR - wordL, attblue, false);
+                        } else if (text.substring(wordL, wordR).matches("(\\W)*(int|float|boolean|string|camara|bocina|aspersor|luz|true|false|puerta|juguete|premio)")) {
+                            setCharacterAttributes(wordL, wordR - wordL, attgreen, false);
+                        } else if (text.substring(wordL, wordR).matches("(\\W)*" + (char) 35 + "(.|\\b|\\s)*")) {
+                            setCharacterAttributes(wordL, wordR - wordL, attorange, false);
                         } else {
-                            setCharacterAttributes(wordL , wordR - wordL , attblack, false);
+                            setCharacterAttributes(wordL, wordR - wordL, attblack, false);
                         }
                         wordL = wordR;
                     }
@@ -791,15 +878,69 @@ if(T[i].getTk().equals("int") && T[i+1].getTk().equals(":") && T[i+3].getTipo().
         txtPEditor.setText(temp);
 
     }
-    
-protected static int exiId(String id){
-int i=0;
-    System.out.println(j);
-while(i<j && !I[i].getId().equals("null")){
-if(I[i].getId().equals(id)) {System.out.println(I[i]); return i;}
-}
-return -1;
-}
+
+    public static int exiId(String id) {
+        int i = 0;
+        try {
+            while (!I[i].equals("null")) {
+                if (I[i].getId().equals(id)) {
+                    return i;
+                }
+                i++;
+            }
+        } catch (NullPointerException e) {
+            return -1;
+        }
+        return -1;
+    }
+
+    public void llaves(Token[] t, int ini, int tope) {
+        while (ini < tope && t[ini] != null) {
+            if (t[ini].getTk().equals("{")) {
+                llavesR(t, ini + 1, tope);
+            }
+            ini++;
+        }
+    }
+
+    public int llavesR(Token[] t, int ini, int tope) {
+        int llave = ini - 1;
+
+        while (ini < tope && t[ini] != null) {
+            if (t[ini].getTk().equals("{")) {
+                ini = llavesR(t, ini + 1, tope);
+            } else if (t[ini].getTk().equals("}")) {
+                return ini;
+            }
+            ini++;
+        }
+        escError(t[llave].getLinea(), t[llave].getCaracter(), "Falta cerrar llaves.", t, 0);
+        return ini;
+    }
+
+    public void llaves2(Token[] t, int ini, int tope) {
+        while (tope > 0 && t[ini] != null) {
+            if (t[tope].getTk().equals("}")) {
+                llavesR2(t, tope, tope - 1);
+            }
+            tope--;
+        }
+    }
+
+    public int llavesR2(Token[] t, int lla, int tope) {
+        int llave = lla;
+
+        while (tope > 0 && t[tope] != null) {
+            if (t[tope].getTk().equals("}")) {
+                tope = llavesR2(t, tope, tope - 1);
+            } else if (t[tope].getTk().equals("{")) {
+                return tope;
+            }
+            tope--;
+        }
+        escError(t[llave].getLinea(), t[llave].getCaracter(), "Falta abrir llaves.", t, 0);
+        return tope;
+    }
 
     /**
      * @param args the command line arguments
@@ -836,13 +977,13 @@ return -1;
         });
     }
 
-    private Token T[ ]=new Token[10000];
+    private Token T[] = new Token[10000];
     protected static Identificador I[] = new Identificador[10000];
-    protected static int j = 0;
-    private int t=0;
-    private String archivo="Archivo.txt";
+    protected static int j, y = 0;
+    private int t = 0;
+    private String archivo = "Archivo.txt";
     private NumeroLinea NumLinea;
-        
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrir;
     private javax.swing.JButton btnAnaLex;
@@ -871,4 +1012,16 @@ return -1;
     private javax.swing.JTextPane txtPToken;
     private javax.swing.JTextField txtToken;
     // End of variables declaration//GEN-END:variables
+
+    static VoiceManager vocesI;
+    static Voice Voz;
+
+    public static void hablar(String M) {
+        System.setProperty("mbrola.base", "/mbrola/mbrola");
+        vocesI = VoiceManager.getInstance();
+        Voz = vocesI.getVoice("mbrola_us1");
+        Voz.allocate();
+        Voz.speak(M);
+    }
+
 }

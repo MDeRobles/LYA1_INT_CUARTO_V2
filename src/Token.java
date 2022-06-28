@@ -6,7 +6,7 @@
 
 /**
  *
- * @author Eduardo
+ * 
  */
 public class Token {
     private String tk, tipo;

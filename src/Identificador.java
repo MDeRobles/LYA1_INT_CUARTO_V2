@@ -5,7 +5,7 @@
 
 /**
  *
- * @author lalo_
+ * 
  */
 public class Identificador {
     private String id, val, tipo;
@@ -55,6 +55,44 @@ public class Identificador {
 
     public String toString() {
         return id + ", " + val + ", " + tipo;
+    }
+
+    public static int buscarId(String id){
+        int j = 0;
+        try{
+            while(!Editor.I[j].equals("null")){
+                if(Editor.I[j].getId().equals(id)){
+                    return j;
+                }
+                j++;
+            }
+        }catch(NullPointerException e){
+            return -1;
+        }
+        return -1;
+    }
+
+    public static Identificador buscarId(String id, int l, int c, String msg, Token[] t, int k){
+        int j = 0;
+        try{
+            while(!Editor.I[j].equals("null")){
+                if(Editor.I[j].getId().equals(id)){
+                    return Editor.I[j];
+                }
+                j++;
+            }
+        }catch(NullPointerException e){
+            return null;
+        }
+        return null;
+    }
+
+    public static boolean comp(String val, String tipo){
+        if(val.equals("")) return true;
+        if(tipo.equals("Entero") && Grafos.esInt(val)) return true;
+        else if(tipo.equals("Decimal") && Grafos.esDecimal(val)) return true;
+        else if((tipo.equals("Boolean") || tipo.equals("Luz") || tipo.equals("Bocina") || tipo.equals("Camara")||tipo.equals("Aspersor")||tipo.equals("Juguete")||tipo.equals("Premio")||tipo.equals("Puerta")) && (val.equals("true") || val.equals("false"))) return true;
+        return false;
     }
 
 }
